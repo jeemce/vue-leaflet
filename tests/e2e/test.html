@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Vue Leaflet Test Page</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+		}
+		#app {
+			width: 100vw;
+			height: 100vh;
+		}
+		.controls {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			z-index: 1000;
+			background: white;
+			padding: 10px;
+			border-radius: 4px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+		.log {
+			position: absolute;
+			bottom: 10px;
+			left: 10px;
+			z-index: 1000;
+			background: white;
+			padding: 10px;
+			border-radius: 4px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			max-width: 300px;
+			max-height: 200px;
+			overflow-y: auto;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<div class="controls">
+			<button @click="addMarker">Add Marker</button>
+			<button @click="addPolygon">Add Polygon</button>
+			<button @click="clearLayers">Clear All</button>
+		</div>
+		<div class="log" data-testid="click-log">
+			<div v-for="(log, index) in logs" :key="index">{{ log }}</div>
+		</div>
+		<Widget
+			ref="mapRef"
+			:center="center"
+			:zoom="zoom"
+			@map-ready="onMapReady"
+			@click="onMapClick"
+		>
+			<LMarker
+				v-for="marker in markers"
+				:key="marker.id"
+				:latlng="marker.latlng"
+				@click="logEvent('marker clicked')"
+			/>
+			<LPolygon
+				v-for="polygon in polygons"
+				:key="polygon.id"
+				:latlngs="polygon.latlngs"
+			/>
+		</Widget>
+	</div>
+
+	<script type="module">
+		import { createApp, ref, onMounted } from 'vue';
+		import Widget from '../widgets/leaflet.vue';
+		import LMarker from '../widgets/LMarker.vue';
+		import LPolygon from '../widgets/LPolygon.vue';
+
+		const app = createApp({
+			components: { Widget, LMarker, LPolygon },
+			setup() {
+				const mapRef = ref(null);
+				const center = ref([51.505, -0.09]);
+				const zoom = ref(13);
+				const markers = ref([]);
+				const polygons = ref([]);
+				const logs = ref([]);
+				let markerId = 0;
+				let polygonId = 0;
+
+				const onMapReady = (map) => {
+					window.testMap = map;
+					logEvent('Map ready');
+				};
+
+				const onMapClick = (e) => {
+					logEvent(`Map clicked at ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
+				};
+
+				const logEvent = (message) => {
+					const timestamp = new Date().toLocaleTimeString();
+					logs.value.unshift(`[${timestamp}] ${message}`);
+					if (logs.value.length > 50) {
+						logs.value.pop();
+					}
+				};
+
+				const addMarker = () => {
+					const lat = center.value[0] + (Math.random() - 0.5) * 0.02;
+					const lng = center.value[1] + (Math.random() - 0.5) * 0.02;
+					markers.value.push({
+						id: ++markerId,
+						latlng: [lat, lng],
+					});
+					logEvent(`Added marker ${markerId} at ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+				};
+
+				const addPolygon = () => {
+					const lat = center.value[0];
+					const lng = center.value[1];
+					polygons.value.push({
+						id: ++polygonId,
+						latlngs: [
+							[lat + 0.01, lng - 0.01],
+							[lat + 0.01, lng + 0.01],
+							[lat - 0.01, lng + 0.01],
+						],
+					});
+					logEvent(`Added polygon ${polygonId}`);
+				};
+
+				const clearLayers = () => {
+					const count = markers.value.length + polygons.value.length;
+					markers.value = [];
+					polygons.value = [];
+					markerId = 0;
+					polygonId = 0;
+					logEvent(`Cleared ${count} layers`);
+				};
+
+				onMounted(() => {
+					console.log('Test app mounted');
+				});
+
+				return {
+					mapRef,
+					center,
+					zoom,
+					markers,
+					polygons,
+					logs,
+					onMapReady,
+					onMapClick,
+					addMarker,
+					addPolygon,
+					clearLayers,
+					logEvent,
+				};
+			},
+		});
+
+		app.mount('#app');
+	</script>
+</body>
+</html>

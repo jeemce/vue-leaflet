@@ -1,0 +1,71 @@
+{
+	"name": "vue-leaflet",
+	"version": "1.0.0",
+	"description": "Vue SFC wrapper for Leaflet library",
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./widgets/leaflet.vue"
+		},
+		"./widgets/*": {
+			"import": "./widgets/*.vue"
+		},
+		"./plugins/*": {
+			"import": "./plugins/*"
+		}
+	},
+	"files": [
+		"widgets",
+		"plugins"
+	],
+	"scripts": {
+		"test": "vitest run",
+		"test:unit": "vitest run",
+		"test:unit:watch": "vitest",
+		"test:browser": "playwright test",
+		"test:browser:headed": "playwright test --headed",
+		"test:browser:ui": "playwright test --ui",
+		"test:integration": "vitest run --config vitest.integration.config.js",
+		"test:coverage": "vitest run --coverage",
+		"test:all": "npm run test:unit && npm run test:integration && npm run test:browser",
+		"playwright:install": "playwright install",
+		"docs:dev": "vitepress dev docs",
+		"docs:build": "vitepress build docs"
+	},
+	"dependencies": {
+		"leaflet": "^2.0.0-alpha.1 || ^2.0.0-beta.1 || ^2.0.0-rc.1 || ^2.0.0",
+		"vue": "^3.4.0"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.40.0",
+		"@vitejs/plugin-vue": "^5.0.0",
+		"@vitest/coverage-v8": "^1.0.0",
+		"@vue/test-utils": "^2.4.0",
+		"happy-dom": "^13.0.0",
+		"jsdom": "^24.0.0",
+		"msw": "^2.0.0",
+		"playwright": "^1.40.0",
+		"vitest": "^1.0.0",
+		"vitepress": "^1.0.0"
+	},
+	"peerDependencies": {
+		"vue": "^3.0.0"
+	},
+	"keywords": [
+		"vue",
+		"leaflet",
+		"map",
+		"wrapper",
+		"sfc",
+		"component"
+	],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/username/vue-leaflet.git"
+	},
+	"bugs": {
+		"url": "https://github.com/username/vue-leaflet/issues"
+	},
+	"homepage": "https://github.com/username/vue-leaflet#readme"
+}
