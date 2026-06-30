@@ -90,7 +90,7 @@ const onLayerRemove = (event) => {
 
 ```vue
 <script setup>
-import { useLeaflet } from 'vue-leaflet/composables/useLeaflet.js';
+import { useLeaflet } from 'vue-leaflet/plugins/useLeaflet.js';
 
 const {
 	// Core
@@ -142,7 +142,7 @@ whenReady((mapInstance) => {
 ```vue
 <script setup>
 import { onMounted } from 'vue';
-import { useLeaflet } from 'vue-leaflet/composables/useLeaflet.js';
+import { useLeaflet } from 'vue-leaflet/plugins/useLeaflet.js';
 
 const { whenReady, createPolygon, createCircle, addToMap, createWMS } = useLeaflet();
 
